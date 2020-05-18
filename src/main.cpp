@@ -12,6 +12,7 @@
 
 #include "dataLogger.h"
 
+// Need to be Created for injection of Wifi Credential
 #include "WiFiCred.h"
 
 //ESP8266WiFiMulti wifiMulti;       // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
