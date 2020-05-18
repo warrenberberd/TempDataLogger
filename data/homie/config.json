@@ -1,0 +1,28 @@
+{
+    "name": "The Pool Temperature",
+    "device_id": "POOL_DATA_LOGGER",
+    "device_stats_interval": 60,
+
+    "wifi": {
+      "ssid": "WIFI_SSID",
+      "password": "WIFI_PASSWORD",
+      "bssid": "AA:BB:CC:DD:EE:FF",
+      "channel": 6
+    },
+    "mqtt": {
+      "host": "192.168.1.12",
+      "port": 1883,
+      "base_topic": "devices/",
+      "auth": false,
+      "username": "mqttuser",
+      "password": "mqttpassword"
+    },
+    "ota": {
+      "enabled": false
+    },
+    "settings": {
+      "temperatureInterval": 60,
+      "percentage": 55,
+      "deepSleepInterval": 180
+    }
+  }
