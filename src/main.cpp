@@ -22,14 +22,14 @@ AsyncWebServer server(80);       // Create a webserver object that listens for H
 File fsUploadFile;                 // a File variable to temporarily store the received file
 
 #define ENABLE_DEEP_SLEEP true
-#define DEEP_SLEEP_INTERVAL 30000000  // Interval of deepsleep in microSecond
+//#define DEEP_SLEEP_INTERVAL 30000000  // Interval of deepsleep in microSecond
 
 #define ESP_NAME "TEMP_DATA_LOGGER"
 
 const char* mdnsName = ESP_NAME; // Domain name for the mDNS responder
 
-const char *ssid = ESP_NAME; // The name of the Wi-Fi network that will be created
-const char *password = WIFI_PASS;   // The password required to connect to it, leave blank for an open network
+//const char *ssid = ESP_NAME; // The name of the Wi-Fi network that will be created
+//const char *password = WIFI_PASS;   // The password required to connect to it, leave blank for an open network
 
 
 const char *OTAName = ESP_NAME;           // A name and a password for the OTA service
@@ -43,7 +43,7 @@ const char *OTAPassword = WIFI_PASS;
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
-#define DEFAULT_TEMPERATURE_INTERVAL DEEP_SLEEP_INTERVAL/1000
+#define DEFAULT_TEMPERATURE_INTERVAL 30000
 
 HomieSetting<long> deepSleeIntervalSetting("deepSleepInterval", "Deep Sleep interval in Seconds");  // id, description
 
@@ -258,20 +258,26 @@ float readVoltValue(){
   return Rvalue;
 }
 
-void handleHomieLoop() {  
-
+void handleHomieLoop() {
   if (millis() - lastTemperatureSent >= DEFAULT_TEMPERATURE_INTERVAL || lastTemperatureSent < 1000) {
     #ifdef DEBUG
       Homie.getLogger() << "Voltage: " << currentVoltage << " V" << endl;
     #endif
     voltageNode.setProperty("volts").send(String(currentVoltage));
 
-    float temperature = currentTemp; // Fake temperature here, for the example
+    float temperature = currentTemp;
 
     #ifdef DEBUG
       Homie.getLogger() << "Temperature: " << temperature << " °C" << endl;
     #endif
-    temperatureNode.setProperty("degrees").send(String(temperature));
+
+          // Do not transmit the temperature if it's too low
+    if(currentTemp<-5.0){
+      Homie.getLogger() << "[ERROR] Temperature is too low !" << endl;
+    }else{
+      temperatureNode.setProperty("degrees").send(String(temperature));
+    }
+    
     lastTemperatureSent = millis();
   }
 }
